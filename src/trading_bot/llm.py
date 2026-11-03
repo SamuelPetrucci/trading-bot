@@ -151,17 +151,20 @@ def decide_trades(
             "longs": ["SYMBOL"],
             "shorts": ["SYMBOL"],
             "closes": ["SYMBOL"],
-            "rationale": "short explanation of trend thesis",
+            "rationale": "one short sentence",
         },
     }
 
     try:
         from openai import OpenAI
 
+        # Groq free OTPM is often ~1000; omit max_tokens and the API reserves ~2k.
+        max_tokens = int(os.getenv("LLM_MAX_TOKENS", "400"))
         client = OpenAI(api_key=api_key, base_url=base_url)
         resp = client.chat.completions.create(
             model=model,
             temperature=0.2,
+            max_tokens=max_tokens,
             response_format={"type": "json_object"},
             messages=[
                 {"role": "system", "content": system},

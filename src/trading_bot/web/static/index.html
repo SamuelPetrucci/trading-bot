@@ -2,8 +2,14 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1"
+    />
     <meta name="theme-color" content="#070b09" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <title>Desk</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -144,10 +150,11 @@
     </div>
 
     <nav class="dock" aria-label="Primary">
-      <button data-route="portfolio">Home</button>
-      <button data-route="llm">LLM</button>
-      <button data-route="trades">Trades</button>
-      <button data-route="control">Trade</button>
+      <button type="button" data-route="portfolio">Home</button>
+      <button type="button" data-route="llm">LLM</button>
+      <button type="button" data-route="trades">Trades</button>
+      <button type="button" data-route="control">Trade</button>
+      <button type="button" data-route="uptime">24/7</button>
     </nav>
 
     <div class="toast" id="toast"></div>

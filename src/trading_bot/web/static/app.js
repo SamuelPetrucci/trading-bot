@@ -63,8 +63,18 @@ function showRoute(route) {
   document.querySelectorAll(".side-nav a, .dock button").forEach((el) => {
     el.classList.toggle("active", el.dataset.route === name);
   });
+  window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+  resizeChart();
   if (name === "llm") refreshLlm().catch(() => {});
   if (name === "trades") refreshTrades().catch(() => {});
+}
+
+function resizeChart() {
+  if (!chartApi) return;
+  const el = $("chart");
+  if (!el || !el.clientWidth) return;
+  const h = Math.max(160, Math.min(240, Math.round(el.clientWidth * 0.48)));
+  chartApi.applyOptions({ width: el.clientWidth, height: h });
 }
 
 function renderBadges(s) {
@@ -207,13 +217,15 @@ function syncSelects(symbols, preferred) {
 function ensureChart() {
   if (chartApi) return;
   const el = $("chart");
+  const h = Math.max(160, Math.min(240, Math.round((el.clientWidth || 320) * 0.48)));
   chartApi = LightweightCharts.createChart(el, {
     layout: { background: { color: "transparent" }, textColor: "#8d9b92" },
     grid: { vertLines: { visible: false }, horzLines: { color: "rgba(36,48,42,0.55)" } },
     rightPriceScale: { borderVisible: false },
     timeScale: { borderVisible: false },
-    width: el.clientWidth,
-    height: 180,
+    handleScroll: { vertTouchDrag: false },
+    width: el.clientWidth || 320,
+    height: h,
   });
   areaSeries = chartApi.addAreaSeries({
     lineColor: "#b6f36a",
@@ -221,9 +233,13 @@ function ensureChart() {
     bottomColor: "rgba(182, 243, 106, 0.02)",
     lineWidth: 2,
   });
-  window.addEventListener("resize", () => {
-    if (chartApi) chartApi.applyOptions({ width: el.clientWidth });
-  });
+  window.addEventListener("resize", resizeChart);
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener("resize", resizeChart);
+  }
+  if (typeof ResizeObserver !== "undefined") {
+    new ResizeObserver(resizeChart).observe(el);
+  }
 }
 
 async function loadChart(symbol) {

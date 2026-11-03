@@ -15,28 +15,48 @@
   --font: "Outfit", system-ui, sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, monospace;
   --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+  --dock-h: 64px;
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-l: env(safe-area-inset-left, 0px);
+  --safe-r: env(safe-area-inset-right, 0px);
 }
 
 * { box-sizing: border-box; }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 html, body {
   margin: 0;
   min-height: 100%;
+  min-height: 100dvh;
   background:
     radial-gradient(900px 500px at 80% -10%, rgba(182, 243, 106, 0.12), transparent 55%),
     radial-gradient(700px 400px at 0% 100%, rgba(40, 80, 50, 0.35), transparent 50%),
     var(--bg);
   color: var(--text);
   font-family: var(--font);
+  overflow-x: hidden;
 }
 
 body {
-  padding: 16px 16px 96px;
+  padding:
+    max(12px, var(--safe-t))
+    max(12px, var(--safe-r))
+    calc(var(--dock-h) + 28px + var(--safe-b))
+    max(12px, var(--safe-l));
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .shell {
   max-width: 480px;
   margin: 0 auto;
+  width: 100%;
+  min-width: 0;
 }
 
 .shell.multipage .page { display: none; }
@@ -62,6 +82,7 @@ body {
   font-weight: 800;
   background: linear-gradient(180deg, #c8ff7a, #9be04a);
   color: #10200f;
+  flex-shrink: 0;
 }
 
 .side-nav a {
@@ -72,6 +93,7 @@ body {
   border-radius: 14px;
   margin-bottom: 6px;
   border: 1px solid transparent;
+  min-height: 44px;
 }
 
 .side-nav a.active,
@@ -84,6 +106,7 @@ body {
 .feed {
   display: grid;
   gap: 8px;
+  min-width: 0;
 }
 
 .feed-item {
@@ -91,6 +114,9 @@ body {
   border: 1px solid var(--line);
   border-radius: 16px;
   padding: 12px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .feed-item .stage {
@@ -116,12 +142,14 @@ body {
   color: #dce8d8;
   line-height: 1.55;
   padding-left: 18px;
+  overflow-wrap: anywhere;
 }
 
 .howto code {
   font-family: var(--mono);
   font-size: 0.8rem;
   color: var(--lime);
+  word-break: break-all;
 }
 
 .metrics {
@@ -136,6 +164,7 @@ body {
   border: 1px solid var(--line);
   border-radius: 16px;
   padding: 12px;
+  min-width: 0;
 }
 
 .metric .label {
@@ -146,11 +175,14 @@ body {
 
 .metric .value {
   font-family: var(--mono);
-  font-size: 1.05rem;
+  font-size: clamp(0.9rem, 3.8vw, 1.05rem);
+  overflow-wrap: anywhere;
 }
 
 @media (min-width: 980px) {
-  body { padding: 24px 24px 40px; }
+  body {
+    padding: 24px 24px 40px;
+  }
   .shell.multipage {
     max-width: 1120px;
     display: grid;
@@ -160,18 +192,19 @@ body {
   }
   .side-nav.desktop-only { display: block; }
   .pane { min-height: 780px; }
-  .dock { display: none; }
+  .dock { display: none !important; }
   .pages { min-width: 0; }
 }
 
 .pane {
   background: linear-gradient(180deg, #141c18, #0e1411);
   border: 1px solid var(--line);
-  border-radius: 28px;
+  border-radius: clamp(18px, 4vw, 28px);
   box-shadow: var(--shadow);
-  padding: 18px 16px 22px;
+  padding: 16px 14px 20px;
   position: relative;
   overflow: hidden;
+  min-width: 0;
 }
 
 .pane::before {
@@ -188,21 +221,23 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 18px;
+  gap: 10px;
+  margin-bottom: 16px;
   position: relative;
   z-index: 1;
 }
 
 .top h1 {
   margin: 0;
-  font-size: 1.55rem;
+  font-size: clamp(1.25rem, 5.5vw, 1.55rem);
   letter-spacing: -0.03em;
   font-weight: 700;
+  min-width: 0;
 }
 
 .icon-btn {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 14px;
   border: 1px solid var(--line);
   background: var(--bg-soft);
@@ -210,12 +245,15 @@ body {
   display: grid;
   place-items: center;
   cursor: pointer;
+  flex-shrink: 0;
+  font-size: 1.1rem;
 }
 
 .hero {
   position: relative;
   z-index: 1;
   margin-bottom: 8px;
+  min-width: 0;
 }
 
 .hero .label {
@@ -225,10 +263,11 @@ body {
 }
 
 .hero .balance {
-  font-size: clamp(2.2rem, 8vw, 2.8rem);
+  font-size: clamp(1.85rem, 9vw, 2.8rem);
   font-weight: 700;
   letter-spacing: -0.04em;
   line-height: 1.05;
+  overflow-wrap: anywhere;
 }
 
 .pill {
@@ -243,6 +282,7 @@ body {
   font-family: var(--mono);
   font-size: 0.78rem;
   border: 1px solid rgba(182, 243, 106, 0.25);
+  max-width: 100%;
 }
 
 .pill.neg {
@@ -264,10 +304,11 @@ body {
   border: 1px solid var(--line);
   background: #0f1612;
   border-radius: 999px;
-  padding: 5px 10px;
+  padding: 6px 10px;
   font-family: var(--mono);
   font-size: 0.68rem;
   color: var(--muted);
+  line-height: 1.2;
 }
 
 .badge.on { color: var(--lime); border-color: rgba(182, 243, 106, 0.35); }
@@ -278,6 +319,7 @@ body {
   margin: 8px 0 18px;
   position: relative;
   z-index: 1;
+  min-width: 0;
 }
 
 .chart-toolbar {
@@ -286,20 +328,27 @@ body {
   margin-bottom: 8px;
 }
 
-.chart-toolbar select {
+.chart-toolbar select,
+.trade-row select,
+select {
   flex: 1;
-  min-height: 38px;
+  min-width: 0;
+  min-height: 44px;
   border-radius: 12px;
   border: 1px solid var(--line);
   background: #0f1612;
   color: var(--text);
   padding: 0 10px;
   font: inherit;
+  font-size: 16px; /* prevents iOS zoom on focus */
+  max-width: 100%;
 }
 
 .chart {
   width: 100%;
-  height: 180px;
+  height: min(42vw, 220px);
+  min-height: 160px;
+  max-height: 240px;
   border-radius: 16px;
   overflow: hidden;
 }
@@ -308,6 +357,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
   margin: 8px 0 10px;
   position: relative;
   z-index: 1;
@@ -315,25 +365,30 @@ body {
 
 .section-title h2 {
   margin: 0;
-  font-size: 1.05rem;
+  font-size: clamp(0.95rem, 4vw, 1.05rem);
   font-weight: 650;
+  min-width: 0;
 }
 
 .section-title span {
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
+  text-align: right;
+  flex-shrink: 0;
+  max-width: 45%;
 }
 
 .asset {
   display: grid;
-  grid-template-columns: 44px 1fr auto;
-  gap: 12px;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 10px;
   align-items: center;
   padding: 12px 0;
   border-bottom: 1px solid rgba(36, 48, 42, 0.85);
   cursor: pointer;
   position: relative;
   z-index: 1;
+  min-width: 0;
 }
 
 .asset:last-child { border-bottom: 0; }
@@ -349,26 +404,35 @@ body {
   background: linear-gradient(145deg, #2a3b30, #152019);
   color: var(--lime);
   border: 1px solid var(--line);
+  flex-shrink: 0;
 }
 
 .asset .name {
   font-weight: 650;
   letter-spacing: -0.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .asset .meta {
   color: var(--muted);
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   margin-top: 2px;
   font-family: var(--mono);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .asset .right {
   text-align: right;
+  flex-shrink: 0;
 }
 
 .asset .usd {
   font-weight: 650;
+  font-size: clamp(0.85rem, 3.5vw, 1rem);
 }
 
 .asset .chg {
@@ -394,9 +458,12 @@ body {
   border: 1px solid var(--line);
   background: #0f1612;
   border-radius: 999px;
-  padding: 4px 9px;
+  padding: 6px 10px;
   font-size: 0.68rem;
   font-family: var(--mono);
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
 }
 
 .llm-card, .news-card, .logs-card, .controls-card {
@@ -407,6 +474,8 @@ body {
   padding: 14px;
   position: relative;
   z-index: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .llm-title {
@@ -421,17 +490,20 @@ body {
   color: #dce8d8;
   font-size: 0.92rem;
   line-height: 1.45;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .hint { color: var(--muted); font-size: 0.85rem; margin: 0; }
 
-.trade-stack { display: grid; gap: 10px; position: relative; z-index: 1; }
+.trade-stack { display: grid; gap: 10px; position: relative; z-index: 1; min-width: 0; }
 
 .trade-box {
   background: #0f1612;
   border: 1px solid var(--line);
   border-radius: 18px;
   padding: 14px;
+  min-width: 0;
 }
 
 .trade-box .label {
@@ -445,16 +517,18 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 10px;
+  min-width: 0;
 }
 
 .trade-row input, .trade-row select {
   width: 100%;
+  min-width: 0;
   border: 0;
   outline: none;
   background: transparent;
   color: var(--text);
   font: inherit;
-  font-size: 1.45rem;
+  font-size: 16px;
   font-weight: 650;
 }
 
@@ -468,6 +542,10 @@ body {
   border: 1px solid var(--line);
   white-space: nowrap;
   font-weight: 650;
+  flex-shrink: 0;
+  max-width: 40%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .swap-details {
@@ -477,17 +555,22 @@ body {
   gap: 6px;
   margin: 4px 2px;
   font-family: var(--mono);
+  overflow-wrap: anywhere;
 }
 
 .btn {
   appearance: none;
   border: 0;
   border-radius: 18px;
-  min-height: 54px;
+  min-height: 48px;
   padding: 14px 16px;
   font: inherit;
+  font-size: 16px;
   font-weight: 700;
   cursor: pointer;
+  width: 100%;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .btn-lime {
@@ -520,7 +603,11 @@ body {
   gap: 8px;
 }
 
-.row .btn { flex: 1; min-width: 120px; }
+.row .btn {
+  flex: 1 1 calc(50% - 4px);
+  min-width: 0;
+  width: auto;
+}
 
 .switch {
   display: flex;
@@ -531,21 +618,31 @@ body {
   border: 1px solid var(--line);
   border-radius: 14px;
   background: #0c1210;
+  min-height: 48px;
+}
+
+.switch input[type="number"],
+.switch input[type="checkbox"] {
+  min-height: 28px;
+  min-width: 28px;
 }
 
 .switch input[type="number"] {
   width: 88px;
+  max-width: 40vw;
   background: #0f1612;
   border: 1px solid var(--line);
   color: var(--text);
   border-radius: 8px;
-  padding: 6px 8px;
+  padding: 8px;
   font: inherit;
+  font-size: 16px;
 }
 
 .news-item {
   border-bottom: 1px solid var(--line);
   padding: 10px 0;
+  min-width: 0;
 }
 
 .news-item:last-child { border-bottom: 0; }
@@ -554,6 +651,7 @@ body {
   color: var(--text);
   text-decoration: none;
   font-weight: 650;
+  overflow-wrap: anywhere;
 }
 
 .news-meta {
@@ -561,40 +659,46 @@ body {
   font-family: var(--mono);
   font-size: 0.7rem;
   margin-top: 4px;
+  overflow-wrap: anywhere;
 }
 
 .news-summary {
   color: #c5d2c8;
   font-size: 0.85rem;
   margin-top: 6px;
+  overflow-wrap: anywhere;
 }
 
 .logs {
   margin: 0;
-  max-height: 220px;
+  max-height: min(40vh, 260px);
   overflow: auto;
+  -webkit-overflow-scrolling: touch;
   font-family: var(--mono);
-  font-size: 0.7rem;
+  font-size: 0.68rem;
   line-height: 1.45;
   color: #b7c5b9;
   white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .dock {
   position: fixed;
   left: 50%;
-  bottom: 18px;
+  bottom: max(10px, var(--safe-b));
   transform: translateX(-50%);
-  width: min(420px, calc(100% - 28px));
-  background: rgba(18, 25, 22, 0.92);
-  backdrop-filter: blur(12px);
+  width: min(440px, calc(100% - 20px - var(--safe-l) - var(--safe-r)));
+  background: rgba(18, 25, 22, 0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border: 1px solid var(--line);
   border-radius: 22px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  padding: 8px;
+  grid-template-columns: repeat(5, 1fr);
+  padding: 6px;
   z-index: 30;
   box-shadow: var(--shadow);
+  padding-bottom: max(6px, calc(var(--safe-b) * 0.15));
 }
 
 .dock button {
@@ -602,11 +706,15 @@ body {
   border: 0;
   background: transparent;
   color: var(--muted);
-  border-radius: 16px;
+  border-radius: 14px;
   min-height: 52px;
+  padding: 6px 2px;
   font: inherit;
-  font-size: 0.72rem;
+  font-size: clamp(0.62rem, 2.8vw, 0.72rem);
   cursor: pointer;
+  line-height: 1.15;
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 .dock button.active {
@@ -625,7 +733,7 @@ body {
 .toast {
   position: fixed;
   left: 50%;
-  bottom: 88px;
+  bottom: calc(var(--dock-h) + 24px + var(--safe-b));
   transform: translateX(-50%);
   background: #152019;
   border: 1px solid #355042;
@@ -637,8 +745,10 @@ body {
   pointer-events: none;
   transition: opacity 0.2s ease;
   z-index: 40;
-  max-width: min(90vw, 420px);
+  max-width: min(92vw, 420px);
+  width: max-content;
   text-align: center;
+  overflow-wrap: anywhere;
 }
 
 .toast.show { opacity: 1; }
@@ -658,4 +768,13 @@ body {
   border: 1px solid var(--line);
   margin: 0 8px 8px 0;
   font-size: 0.85rem;
+  max-width: 100%;
+}
+
+@media (max-width: 360px) {
+  body { padding-left: 10px; padding-right: 10px; }
+  .pane { padding: 14px 12px 18px; }
+  .metrics { gap: 8px; }
+  .dock button { font-size: 0.58rem; }
+  .row .btn { flex: 1 1 100%; }
 }

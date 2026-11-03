@@ -78,17 +78,22 @@ Start-ScheduledTask -TaskName TradingBotDesk
 
 For true always-on without your laptop: host the bot API on a small VPS and point the Vercel UI `BOT_API_URL` at it. Set `AUTO_START=true` in `.env`.
 
-## Deploy on Railway
+## Deploy on Render
 
-1. Push this repo to GitHub.
-2. In [Railway](https://railway.app) → **New Project** → **Deploy from GitHub** → select this repo.
-3. Add variables (do **not** commit `.env`):
+1. Go to [render.com](https://render.com) → **New** → **Blueprint** (or **Web Service**).
+2. Connect GitHub repo `SamuelPetrucci/trading-bot`.
+3. If using Blueprint, Render reads `render.yaml`.  
+   If using Web Service manually:
+   - **Runtime:** Docker
+   - **Dockerfile path:** `./Dockerfile`
+   - **Instance type:** Free
+4. Set environment variables:
 
 ```text
-ALPACA_API_KEY=
-ALPACA_SECRET_KEY=
+ALPACA_API_KEY=...
+ALPACA_SECRET_KEY=...
 ALPACA_PAPER_TRADE=true
-GROQ_API_KEY=
+GROQ_API_KEY=...
 LLM_BASE_URL=https://api.groq.com/openai/v1
 LLM_MODEL=qwen/qwen3.8-27b
 AUTO_START=true
@@ -96,8 +101,16 @@ DRY_RUN=false
 DASHBOARD_HOST=0.0.0.0
 ```
 
-4. Railway sets `PORT` automatically. Open the public URL after deploy.
-5. Health check: `/api/health`
+5. Deploy → open the `.onrender.com` URL → check `/api/health`.
+
+**Important (Free plan):** the service **sleeps after ~15 minutes idle**, which stops the trading loop. To keep it awake, ping `/api/health` every 10 minutes (e.g. [cron-job.org](https://cron-job.org)), or upgrade to a paid always-on instance.
+
+## Deploy on Railway
+
+1. Push this repo to GitHub.
+2. In [Railway](https://railway.app) → **New Project** → **Deploy from GitHub** → select this repo.
+3. Add the same env vars as above (Railway sets `PORT` automatically).
+4. Open the public URL → `/api/health`.
 
 ## Strategy
 

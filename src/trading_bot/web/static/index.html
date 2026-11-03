@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#070b09" />
+    <title>Desk</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Outfit:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/styles.css" />
+    <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+  </head>
+  <body>
+    <div class="shell multipage">
+      <aside class="side-nav desktop-only">
+        <div class="brand-block">
+          <div class="brand-mark">D</div>
+          <div>
+            <strong>Desk</strong>
+            <div class="hint">LLM trend desk</div>
+          </div>
+        </div>
+        <a href="#/portfolio" data-route="portfolio">Portfolio</a>
+        <a href="#/llm" data-route="llm">LLM brain</a>
+        <a href="#/trades" data-route="trades">Trades</a>
+        <a href="#/control" data-route="control">Control</a>
+        <a href="#/uptime" data-route="uptime">24/7</a>
+      </aside>
+
+      <main class="pages">
+        <!-- Portfolio -->
+        <section class="pane page" id="page-portfolio">
+          <div class="top">
+            <h1>Portfolio</h1>
+            <button class="icon-btn" id="btn-refresh" title="Refresh">↻</button>
+          </div>
+          <div class="hero">
+            <div class="label">Total balance</div>
+            <div class="balance" id="equity">—</div>
+            <div class="pill" id="daily-pill">—</div>
+          </div>
+          <div class="badges" id="badges"></div>
+          <div class="chart-wrap">
+            <div class="chart-toolbar">
+              <select id="chart-symbol"></select>
+              <select id="chart-tf">
+                <option value="5Min">5m</option>
+                <option value="15Min" selected>15m</option>
+                <option value="1Hour">1h</option>
+                <option value="1Day">1D</option>
+              </select>
+            </div>
+            <div id="chart" class="chart"></div>
+          </div>
+          <div class="section-title"><h2>Assets</h2><span id="asset-count">0</span></div>
+          <div id="positions"></div>
+          <div class="section-title" style="margin-top:18px"><h2>LLM targets</h2><span id="target-count">0</span></div>
+          <div id="targets"></div>
+          <div class="news-card" style="margin-top:14px">
+            <div class="section-title" style="margin-top:0"><h2>News</h2></div>
+            <div id="news"></div>
+          </div>
+        </section>
+
+        <!-- LLM -->
+        <section class="pane page" id="page-llm">
+          <div class="top"><h1>LLM brain</h1></div>
+          <div class="llm-card" id="llm-box"></div>
+          <div class="section-title"><h2>Live activity</h2><span>what the model is doing</span></div>
+          <div id="llm-feed" class="feed"></div>
+          <div class="section-title" style="margin-top:18px"><h2>Recent cycles</h2></div>
+          <div id="llm-cycles" class="feed"></div>
+        </section>
+
+        <!-- Trades -->
+        <section class="pane page" id="page-trades">
+          <div class="top"><h1>Trades</h1></div>
+          <div class="metrics" id="trade-metrics"></div>
+          <div class="section-title"><h2>Summary</h2></div>
+          <div id="trade-summary" class="llm-card"></div>
+          <div class="section-title"><h2>Journal</h2></div>
+          <div id="trade-journal" class="feed"></div>
+          <div class="section-title"><h2>Broker orders</h2></div>
+          <div id="broker-orders" class="feed"></div>
+        </section>
+
+        <!-- Control -->
+        <section class="pane page" id="page-control">
+          <div class="top"><h1>Control</h1><button class="icon-btn" id="btn-preview" title="Preview">✦</button></div>
+          <div class="trade-stack">
+            <div class="trade-box">
+              <div class="label">Focus symbol</div>
+              <div class="trade-row">
+                <select id="trade-symbol"></select>
+                <span class="token-chip" id="trade-side-chip">—</span>
+              </div>
+            </div>
+            <div class="trade-box">
+              <div class="label">Bot status</div>
+              <div class="swap-details" id="trade-details"></div>
+            </div>
+            <div class="controls-card controls">
+              <button class="btn btn-lime" id="btn-once">Run LLM cycle</button>
+              <div class="row">
+                <button class="btn btn-ghost" id="btn-start">Start loop</button>
+                <button class="btn btn-ghost" id="btn-stop">Stop</button>
+              </div>
+              <button class="btn btn-danger" id="btn-flatten">Flatten all</button>
+              <label class="switch"><span>Dry run</span><input type="checkbox" id="dry-run" /></label>
+              <label class="switch"><span>Poll seconds</span><input type="number" id="poll" min="30" max="3600" step="30" /></label>
+            </div>
+            <div class="logs-card">
+              <div class="section-title" style="margin-top:0"><h2>Logs</h2></div>
+              <pre class="logs" id="logs"></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- 24/7 -->
+        <section class="pane page" id="page-uptime">
+          <div class="top"><h1>Run 24/7</h1></div>
+          <div class="llm-card">
+            <div class="llm-title">Keep the bot alive</div>
+            <div class="llm-text">
+              The trader only runs while this PC process is up. Use one of these:
+            </div>
+            <ol class="howto">
+              <li><strong>Simple:</strong> leave this machine on and run <code>scripts\run-24-7.ps1</code> (auto-restarts if it crashes).</li>
+              <li><strong>At login:</strong> run <code>scripts\install-task.ps1</code> as Administrator once — starts Desk whenever you sign in.</li>
+              <li><strong>Cloud:</strong> deploy the Python bot on a small always-on VPS (Railway/Render/DigitalOcean) with your <code>.env</code>; point the Vercel UI at that API URL.</li>
+            </ol>
+            <div class="swap-details" id="uptime-status"></div>
+            <div class="row" style="margin-top:12px">
+              <button class="btn btn-lime" id="btn-start-2">Start loop now</button>
+              <button class="btn btn-ghost" id="btn-stop-2">Stop</button>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <nav class="dock" aria-label="Primary">
+      <button data-route="portfolio">Home</button>
+      <button data-route="llm">LLM</button>
+      <button data-route="trades">Trades</button>
+      <button data-route="control">Trade</button>
+    </nav>
+
+    <div class="toast" id="toast"></div>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
